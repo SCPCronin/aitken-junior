@@ -2,9 +2,9 @@ name: MVN Verify
 run-name: ${{ github.actor }} is running Verification
 on:
   push:
-    branches: [ $default-branch ] # Runs on pushes to default branch
+    branches: [ main ] # Runs on pushes to default branch
   pull_request:
-    branches: [ $default-branch ] # Runs on any PRs to default branch
+    branches: [ main ] # Runs on any PRs to default branch
 
 jobs:
   build:
