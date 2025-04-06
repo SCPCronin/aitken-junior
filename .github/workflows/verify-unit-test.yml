@@ -6,7 +6,8 @@ on:
     branches: [ main ] # Runs on any PRs to default branch
 
 jobs:
-  build:
+  verify:
+    name: MVN Verify
     runs-on: ubuntu-latest
 
     steps:
