@@ -1,5 +1,4 @@
 name: MVN Verify
-run-name: ${{ github.actor }} is running Verification
 on:
   push:
     branches: [ main ] # Runs on pushes to default branch
@@ -12,7 +11,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK 23
+      - name: Set up JDK 23 # Same JAVA Version as machine
         uses: actions/setup-java@v4
         with:
           java-version: '23'
