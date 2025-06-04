@@ -2,6 +2,7 @@ package com.scronin.aitken_junior.Spotify.interfaces;
 
 import com.scronin.aitken_junior.Spotify.model.Album;
 import com.scronin.aitken_junior.Spotify.model.Artist;
+import com.scronin.aitken_junior.Spotify.model.SavedTrack;
 import com.scronin.aitken_junior.Spotify.model.Track;
 
 import java.util.List;
@@ -13,7 +14,7 @@ public interface ISpotifyService {
      *
      * @return A list of Track Objects, which contains all tracks the user has saved
      */
-    List<Track> getSavedTracks();
+    List<SavedTrack> getUsersSavedTracks();
 
     /**
      * Get the count of the saved tracks for the user
