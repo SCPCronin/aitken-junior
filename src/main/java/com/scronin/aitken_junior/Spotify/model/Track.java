@@ -2,6 +2,7 @@ package com.scronin.aitken_junior.Spotify.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,7 @@ public class Track {
     @JsonProperty("restriciton")
     private Restriction restriction;
 
+    @Getter
     @JsonProperty("name")
     private String name;
 

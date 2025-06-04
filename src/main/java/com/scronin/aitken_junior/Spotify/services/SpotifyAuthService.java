@@ -1,11 +1,12 @@
 package com.scronin.aitken_junior.Spotify.services;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Map;
 
+@Slf4j
 @Service
 public class SpotifyAuthService {
 
@@ -18,6 +19,7 @@ public class SpotifyAuthService {
     private final WebClient webClient = WebClient.create("https://accounts.spotify.com");
 
     public String getAccessToken() {
+        log.debug("Getting access token using refresh token");
         return webClient.post()
                 .uri("/api/token")
                 .header("Authorization", this.getBasicAuthHeader())
