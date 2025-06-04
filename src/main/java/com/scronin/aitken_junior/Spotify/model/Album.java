@@ -1,6 +1,7 @@
 package com.scronin.aitken_junior.Spotify.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class Album {
     @JsonProperty("images")
     private List<Image> images;
 
+    @Getter
     @JsonProperty("name")
     private String name;
 
