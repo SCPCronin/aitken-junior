@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: my-postgres
+    environment:
+      POSTGRES_PASSWORD: temporary_password_no_peeking
+    ports:
+      - "31971:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - spring-net
+
+  spring-app:
+    build: .
+    container_name: spring-app
+    ports:
+      - "31970:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: temporary_password_no_peeking
+    depends_on:
+      - postgres
+    networks:
+      - spring-net
+
+volumes:
+  pgdata:
+
+networks:
+  spring-net:

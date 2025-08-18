@@ -5,6 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 @SpringBootApplication
 public class AitkenJuniorApplication {
@@ -18,6 +21,15 @@ public class AitkenJuniorApplication {
 class HelloController {
 	@GetMapping("/hello")
 	public String hello() {
-		return "Hello, Spring Boot!";
+
+		try (Connection connection = DriverManager.getConnection("jdbc:postgresql://postgres:5432/postgres", "postgres", "mysecretpassword")) {
+			// Connection successful
+			System.out.println("Connected to the database!");
+			return "Connected!";
+		} catch (SQLException e) {
+			// Handle any errors
+			System.err.println("Connection failed: " + e.getMessage());
+			return "Not connected!";
+		}
 	}
 }
