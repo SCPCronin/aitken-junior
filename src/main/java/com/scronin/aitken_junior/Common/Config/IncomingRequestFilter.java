@@ -1,4 +1,4 @@
-package com.scronin.aitken_junior.Common.Config;
+package com.scronin.aitken_junior.Common.config;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
