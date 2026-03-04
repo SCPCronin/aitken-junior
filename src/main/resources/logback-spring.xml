@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Logback Spring configuration — profile-aware logging setup.
+
+    Spring Boot reads this file automatically (instead of logback.xml) because the
+    "-spring" suffix gives Spring control over configuration, enabling the
+    <springProfile> blocks below.
+
+    Structure:
+    - dev profile:  Console output with colours, DEBUG level for our packages
+    - other/prod:   Console output without colours, INFO level (JSON format ready to be added)
+-->
+<configuration>
+
+    <!-- =========================================================
+         PROPERTIES
+         ========================================================= -->
+    <property name="LOG_PATTERN_COLOUR"
+              value="%cyan(%d{yyyy-MM-dd HH:mm:ss}) %highlight(%-5level) %yellow([%thread]) %magenta(%logger{36}) - %msg%n"/>
+    <property name="LOG_PATTERN_PLAIN"
+              value="%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger{36} - %msg%n"/>
+
+    <!-- =========================================================
+         DEV PROFILE — coloured console output
+         ========================================================= -->
+    <springProfile name="dev">
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>${LOG_PATTERN_COLOUR}</pattern>
+                <charset>UTF-8</charset>
+            </encoder>
+        </appender>
+
+        <!-- Set DEBUG for our application code, INFO for Spring internals -->
+        <logger name="org.example" level="DEBUG"/>
+        <logger name="org.springframework.web" level="DEBUG"/>
+        <logger name="org.hibernate.SQL" level="DEBUG"/>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <!-- =========================================================
+         ALL OTHER PROFILES (test, prod, default) — plain console output
+         ========================================================= -->
+    <springProfile name="!dev">
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>${LOG_PATTERN_PLAIN}</pattern>
+                <charset>UTF-8</charset>
+            </encoder>
+        </appender>
+
+        <logger name="org.example" level="INFO"/>
+        <logger name="org.springframework.web" level="WARN"/>
+        <logger name="org.hibernate" level="WARN"/>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+</configuration>
+

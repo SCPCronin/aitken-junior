@@ -1,34 +1,65 @@
-version: "3.9"
+# =============================================================================
+# Docker Compose — AitkenJunior local development stack
+#
+# Starts a PostgreSQL container that the Spring Boot application connects to.
+# The frontend service will be added in a later PR (it lives in a separate repo
+# but is wired in here for a one-command local start).
+#
+# Usage:
+#   docker compose up -d          # Start all services in the background
+#   docker compose down           # Stop and remove containers (data persisted in volume)
+#   docker compose down -v        # Stop AND wipe the database volume (full reset)
+#   docker compose logs -f app    # Tail application logs
+#
+# Prerequisites:
+#   - Docker Desktop (or Docker Engine + Compose plugin) installed
+#   - Copy .env.example to .env and fill in your secrets (see .env.example)
+# =============================================================================
 
 services:
+
+  # ===========================================================================
+  # PostgreSQL Database
+  # Using the alpine variant — smallest image that includes everything we need.
+  # alpine images are ~50MB vs ~400MB for the full Debian-based image.
+  # ===========================================================================
   postgres:
-    image: postgres:latest
-    container_name: my-postgres
+    image: postgres:16-alpine
+    container_name: aitken_junior_postgres
+    restart: unless-stopped
+
     environment:
-      POSTGRES_PASSWORD: temporary_password_no_peeking
+      # These values must match spring.datasource.* in application-dev.properties
+      POSTGRES_DB: aitken_junior_db
+      POSTGRES_USER: aitken_user
+      POSTGRES_PASSWORD: aitken_pass
+
     ports:
-      - "31971:5432"
+      # Expose port 5432 on localhost so you can connect with a DB client
+      # (e.g. DBeaver, TablePlus) or the Spring Boot app running outside Docker.
+      # Format: "host_port:container_port"
+      - "5432:5432"
+
     volumes:
-      - pgdata:/var/lib/postgresql/data
-    networks:
-      - spring-net
+      # Named volume — data persists between `docker compose down` / `up` cycles.
+      # Use `docker compose down -v` to wipe the data completely (useful for a clean reset).
+      - postgres_data:/var/lib/postgresql/data
 
-  spring-app:
-    build: .
-    container_name: spring-app
-    ports:
-      - "31970:8080"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: temporary_password_no_peeking
-    depends_on:
-      - postgres
-    networks:
-      - spring-net
+    healthcheck:
+      # pg_isready polls the Postgres port and returns 0 when the server accepts connections.
+      # Docker uses this to mark the container as "healthy" before dependent services start.
+      test: [ "CMD-SHELL", "pg_isready -U aitken_user -d aitken_junior_db" ]
+      interval: 10s   # Check every 10 seconds
+      timeout: 5s     # Fail the check if it takes longer than 5 seconds
+      retries: 5      # Mark unhealthy after 5 consecutive failures
+      start_period: 10s # Grace period before health checks start (allows Postgres to initialise)
 
+# =============================================================================
+# Named Volumes
+# Declaring the volume here makes it managed by Docker Compose and gives it a
+# predictable name. You can inspect it with: docker volume ls
+# =============================================================================
 volumes:
-  pgdata:
+  postgres_data:
+    driver: local
 
-networks:
-  spring-net:
